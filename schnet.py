@@ -12,7 +12,7 @@ import json
 import torchmetrics
 import schnetpack as spk
 from sklearn.metrics import r2_score
-
+import torch.nn.functional as F
 # Atomic number mapping
 atomic_number_map = {
     'H': 1, 'C': 6, 'N': 7
@@ -235,7 +235,8 @@ for fold, indices in folds.items():
     schnet = spk.representation.SchNet( 
         n_atom_basis=n_atom_basis, n_interactions=3,
         radial_basis=radial_basis,
-        cutoff_fn=spk.nn.CosineCutoff(cutoff)
+        cutoff_fn=spk.nn.CosineCutoff(cutoff),
+        activation=F.silu # For PaiNN model
     )
 
     pred_correction = spk.atomistic.Atomwise(n_in=n_atom_basis, output_key='correction_factor')
